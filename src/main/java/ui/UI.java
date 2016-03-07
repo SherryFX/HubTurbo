@@ -99,6 +99,7 @@ public class UI extends Application implements EventDispatcher {
         initPreApplicationState();
         initUI(stage);
         initApplicationState();
+        checkJavaDependency();
         login(TestController.isBypassLogin());
     }
 
@@ -539,5 +540,23 @@ public class UI extends Application implements EventDispatcher {
 
     public boolean isWindowFocused() {
         return mainStage.isFocused();
+    }
+
+    private void checkJavaDependency() {
+        JavaVersion javaRuntimeVersion = JavaVersion.fromString(System.getProperty("java.runtime.version"));
+        JavaVersion javaRequiredVersion = JavaVersion.fromString(JavaVersion.REQUIRED_VERSION);
+
+        checkJavaDependency(javaRuntimeVersion, javaRequiredVersion);
+    }
+
+    private void checkJavaDependency(JavaVersion javaRuntimeVersion, JavaVersion javaRequiredVersion) {
+        if (javaRuntimeVersion.compareTo(javaRequiredVersion) < 0) {
+            String message = "Your Java version is older than HubTurbo's requirement. " +
+                    "Use it at your own risk.\n\n" +
+                    "Required version\t: " + javaRequiredVersion.toString() + "\n" +
+                    "Installed version\t: " + javaRuntimeVersion.toString();
+            DialogMessage.showInformationDialog("Update your Java version",
+                    message);
+        }
     }
 }
